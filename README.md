@@ -9,5 +9,7 @@ Runbook MCP Server executes a given runbook with a terminal and a browser. The g
 # Development Notes
 
 - All the actions taken are stored in an audit log.
-- We would like to support the dry-run mode if possible.
-- We would like to recursively call MCP if possible.
+- We would like to support the dry-run mode if possible. https://github.com/modelcontextprotocol/specification/issues/97 might be related.
+- We would like to recursively call MCP if possible. This depends on https://github.com/modelcontextprotocol/specification/discussions/94.
+
+See also https://modelcontextprotocol.io/development/roadmap#agent-support 
