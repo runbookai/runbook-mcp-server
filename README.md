@@ -9,6 +9,7 @@ Runbook MCP Server executes a given runbook with a terminal and a browser. The g
 
 Commands:
 - run runbook X
+- run runbook template X that is instantiated with given inputs
 - show an execution plan for runbook X (dry-run)
 - convert a conversation into a runbook
 
