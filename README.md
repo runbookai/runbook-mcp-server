@@ -13,7 +13,7 @@ Commands:
 - show an execution plan for runbook X (dry-run)
 - convert a conversation into a runbook
 
-# Specification
+# API Specification
 
 ## Resources
 
@@ -27,10 +27,9 @@ Runbook execution log:
 
 ## Prompts
 
-For each runbook, a corresponding prompt is created. 
+For each runbook, a corresponding prompt is created. Here is an example request.
 
-```json
-// Request
+```
 {
   method: "prompts/get",
   params: {
