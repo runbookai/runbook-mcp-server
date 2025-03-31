@@ -18,11 +18,11 @@ Commands:
 ## Resources
 
 Runbook:
-- Path: runbook://<host>/<org>/<project>/<runbook-id>
+- Path: `runbook://<host>/<org>/<project>/<runbook-id>`
 - Type: text resources
 
 Runbook execution log:
-- Path: runbook-execution-log://<host>/<org>/<project>/<runbook-id>/<history-id>
+- Path: `runbook-execution-log://<host>/<org>/<project>/<runbook-id>/<history-id>`
 - Type: text resources
 
 ## Prompts
