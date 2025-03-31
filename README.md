@@ -13,9 +13,48 @@ Commands:
 - show an execution plan for runbook X (dry-run)
 - convert a conversation into a runbook
 
-To run the runbook, the MCP server itself an MCP client. It reads the content of the runbook and execute as a prompt. 
+# Specification
+
+## Resources
+
+Runbook:
+- Path: runbook://<host>/<org>/<project>/<runbook-id>
+- Type: text resources
+
+Runbook execution log:
+- Path: runbook-execution-log://<host>/<org>/<project>/<runbook-id>/<history-id>
+- Type: text resources
+
+## Prompts
+
+For each runbook, a corresponding prompt is created. 
+
+```json
+// Request
+{
+  method: "prompts/get",
+  params: {
+    name: "execute-runbook",
+    arguments: {
+      runbookName: "backend-service-deploy"
+    }
+  }
+}
+```
+
+
+## Tools
+
+# Alternative Design Considered
+
+Instead of using Prompts, we initially considered making the Runbook MCP server act as a MCP 
+client so that it can execute a runbook by interacting with other MCP servers.
+
+We might revisit the design, but for now, we will see if Prompts are sufficient to handle our use cases.
 
 # Development Notes
+
+## 
 
 - All the actions taken are stored in an audit log.
 - We would like to support the dry-run mode if possible. https://github.com/modelcontextprotocol/specification/issues/97 might be related.
