@@ -13,16 +13,23 @@ Commands:
 - show an execution plan for runbook X (dry-run)
 - convert a conversation into a runbook
 
-# API Specification
+# Rest API Specification 
+
+- `/v1/organizations`
+- `/v1/organizations/<org-id>/projects`
+- `/v1/organizations/<org-id>/projects/<project-id>/runbooks`
+- `/v1/organizations/<org-id>/projects/<project-id>/runbooks/<runbook-id>/logs`
+
+# MCP Server Specification
 
 ## Resources
 
 Runbook:
-- Path: `runbook://<host>/<org>/<project>/<runbook-id>`
+- Path: `runbook://<host>/<runbook-id>`
 - Type: text resources
 
 Runbook execution log:
-- Path: `runbook-execution-log://<host>/<org>/<project>/<runbook-id>/<history-id>`
+- Path: `runbook-execution-log:/<runbook-id>/logs/<log-id>`
 - Type: text resources
 
 ## Prompts
