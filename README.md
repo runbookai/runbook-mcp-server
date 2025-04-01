@@ -29,7 +29,7 @@ Runbook:
 - Type: text resources
 
 Runbook execution log:
-- Path: `runbook-execution-log:/<runbook-id>/logs/<log-id>`
+- Path: `runbook-execution-log://<runbook-id>/logs/<log-id>`
 - Type: text resources
 
 ## Prompts
