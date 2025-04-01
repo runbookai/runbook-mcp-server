@@ -48,19 +48,24 @@ For each runbook, a corresponding prompt is created. Here is an example request.
 }
 ```
 
-
 ## Tools
+
+- CRUD opsfor runbooks?
+
+## Roots
+
+TBD
 
 # Alternative Design Considered
 
 Instead of using Prompts, we initially considered making the Runbook MCP server act as a MCP 
 client so that it can execute a runbook by interacting with other MCP servers.
 
+Sampling is another approach that allows the MCP server to talk to LLM, but it is not currently supported in the Claude Desktop client.
+
 We might revisit the design, but for now, we will see if Prompts are sufficient to handle our use cases.
 
 # Development Notes
-
-## 
 
 - All the actions taken are stored in an audit log.
 - We would like to support the dry-run mode if possible. https://github.com/modelcontextprotocol/specification/issues/97 might be related.
