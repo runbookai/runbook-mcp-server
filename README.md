@@ -5,6 +5,29 @@ Runbook MCP Server executes a given runbook with a terminal and a browser. The g
 - Run ops runbooks (e.g., deploy a service, upgrade a Kubernetes cluster)
 - Run manual test plans (e.g., create a new EC2 instance, ssh into the instance, and run the integration test there).
 
+
+Click "Attach from MCP" and
+
+TODO(kenji): Add to https://glama.ai/mcp
+
+
+```json
+{
+  "mcpServers": {
+    "runbook": {
+      "command": "/Users/kenji/.local/bin/uv",
+      "args": [
+        "--directory",
+        "<PATH>/hack/runbook",
+        "run",
+        "runbook.py"
+      ]
+    }
+  }
+}
+
+```
+
 # A Design Sketch
 
 Commands:
@@ -50,7 +73,7 @@ For each runbook, a corresponding prompt is created. Here is an example request.
 
 ## Tools
 
-- CRUD opsfor runbooks?
+- `create_runbook`
 
 ## Roots
 
@@ -67,29 +90,8 @@ We might revisit the design, but for now, we will see if Prompts are sufficient 
 
 # Development Notes
 
-- All the actions taken are stored in an audit log.
+- All the actions taken are stored in an audit log. This requires some more thoughts.
 - We would like to support the dry-run mode if possible. https://github.com/modelcontextprotocol/specification/issues/97 might be related.
 - We would like to recursively call MCP if possible. https://github.com/modelcontextprotocol/specification/discussions/94 is somewhat relevant.
 
 See also https://modelcontextprotocol.io/development/roadmap#agent-support
-
-
-Follow https://modelcontextprotocol.io/quickstart/server
-
-```
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Create a new directory for our project
-uv init weather
-cd weather
-
-# Create virtual environment and activate it
-uv venv
-source .venv/bin/activate
-
-# Install dependencies
-uv add "mcp[cli]" httpx
-
-# Create our server file
-touch weather.py
-```
