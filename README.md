@@ -1,24 +1,54 @@
+<p align="center">
+  <img title="Runbook.AI" alt="Runbook.AI" width="20%" src="./assets/images/runbook.ai.png">
+</p>
+
 # Runbook MCP Server
 
-Runbook MCP Server executes a given runbook with a terminal and a browser. The goal is to support the following use cases:
+Runbook MCP Server enables you to run your own runbooks from Claude Desktop.
 
 - Run ops runbooks (e.g., deploy a service, upgrade a Kubernetes cluster)
 - Run manual test plans (e.g., create a new EC2 instance, ssh into the instance, and run the integration test there).
 
+Please see the demo video!
 
-Click "Attach from MCP" and
+![demo](./assets/images/demo.gif)
 
-TODO(kenji): Add to https://glama.ai/mcp
 
+# How to Use
+
+To create a new runbook, use the `create_runbook` tool. Here is an example prompt:
+
+```
+Create a new runbook:
+
+- name: list_pods
+- content: List pods in all namespaces, find pods that are not ready, and send that to Slack.
+
+You don't need to interpret the content. Please just pass it to the tool.
+```
+
+To run a runbook, take the following steps:
+
+1. Click "Attach from MCP" from Claude Desktop.
+2. Select `get_runbook_as_prompt` from the list of integrations.
+3. Pass the name of the runbook you would like to execute.
+4. Submit the generated prompt.
+
+Then Claude Desktop will talk to other MCP servers to run the runbook.
+
+
+# Claude Desktop Configuration
+
+Put the following configuration to `claude_desktop_config.json`.
 
 ```json
 {
   "mcpServers": {
     "runbook": {
-      "command": "/Users/kenji/.local/bin/uv",
+      "command": "uv",
       "args": [
         "--directory",
-        "<PATH>/hack/runbook",
+        "<ABSOLUTE_PATH>/runbook-mpc-server",
         "run",
         "runbook.py"
       ]
@@ -28,70 +58,13 @@ TODO(kenji): Add to https://glama.ai/mcp
 
 ```
 
-# A Design Sketch
+# Upcoming Features
 
-Commands:
-- run runbook X
+- Rest endpoint + frontend for managing runbooks.
+
 - run runbook template X that is instantiated with given inputs
 - show an execution plan for runbook X (dry-run)
-- convert a conversation into a runbook
-
-# Rest API Specification
-
-- `/v1/organizations`
-- `/v1/organizations/<org-id>/projects`
-- `/v1/organizations/<org-id>/projects/<project-id>/runbooks`
-- `/v1/organizations/<org-id>/projects/<project-id>/runbooks/<runbook-id>/logs`
-
-# MCP Server Specification
-
-## Resources
-
-Runbook:
-- Path: `runbook://<host>/<runbook-id>`
-- Type: text resources
-
-Runbook execution log:
-- Path: `runbook-execution-log://<runbook-id>/logs/<log-id>`
-- Type: text resources
-
-## Prompts
-
-For each runbook, a corresponding prompt is created. Here is an example request.
-
-```
-{
-  method: "prompts/get",
-  params: {
-    name: "execute-runbook",
-    arguments: {
-      runbookName: "backend-service-deploy"
-    }
-  }
-}
-```
-
-## Tools
-
-- `create_runbook`
-
-## Roots
-
-TBD
-
-# Alternative Design Considered
-
-Instead of using Prompts, we initially considered making the Runbook MCP server act as a MCP
-client so that it can execute a runbook by interacting with other MCP servers.
-
-Sampling is another approach that allows the MCP server to talk to LLM, but it is not currently supported in the Claude Desktop client.
-
-We might revisit the design, but for now, we will see if Prompts are sufficient to handle our use cases.
-
-# Development Notes
-
-- All the actions taken are stored in an audit log. This requires some more thoughts.
-- We would like to support the dry-run mode if possible. https://github.com/modelcontextprotocol/specification/issues/97 might be related.
-- We would like to recursively call MCP if possible. https://github.com/modelcontextprotocol/specification/discussions/94 is somewhat relevant.
-
-See also https://modelcontextprotocol.io/development/roadmap#agent-support
+- convert a previous conversation into a runbook
+- fine-tuning.
+- Be able to refine a runbook. If there is a successful execution, save it as an example
+  and give it to Claude.

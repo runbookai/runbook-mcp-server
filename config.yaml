@@ -1,0 +1,3 @@
+database:
+ uri: runbooks.db
+ migrationDir: migrations
