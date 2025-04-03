@@ -9,7 +9,7 @@ Runbook MCP Server enables you to run your own runbooks from Claude Desktop.
 - Run ops runbooks (e.g., deploy a service, upgrade a Kubernetes cluster)
 - Run manual test plans (e.g., create a new EC2 instance, ssh into the instance, and run the integration test there).
 
-Please see the demo video!
+Please watch the demo video below to understand how it works!
 
 ![demo](./assets/images/demo.gif)
 
@@ -61,10 +61,11 @@ Put the following configuration to `claude_desktop_config.json`.
 # Upcoming Features
 
 - Rest endpoint + frontend for managing runbooks.
-
+- Be able to edit the runbook (with versioning)
 - run runbook template X that is instantiated with given inputs
 - show an execution plan for runbook X (dry-run)
 - convert a previous conversation into a runbook
 - fine-tuning.
 - Be able to refine a runbook. If there is a successful execution, save it as an example
   and give it to Claude.
+- Periodic execution
