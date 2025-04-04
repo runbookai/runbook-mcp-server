@@ -16,13 +16,27 @@ Please watch the demo video below to understand how it works!
 
 # How to Use
 
-To create a new runbook, use the `create_runbook` tool. Here is an example prompt:
+To create a new runbook, use the `create_runbook` tool. Here are example prompts:
 
+*Example 1*
 ```
 Create a new runbook:
 
 - name: list_pods
 - content: List pods in all namespaces, find pods that are not ready, and send that to Slack.
+
+You don't need to interpret the content. Please just pass it to the tool.
+```
+
+*Example 2*
+```
+Create a new runbook:
+
+- name: deploy
+- content:
+  1. Get the latest tag from GitHub X. This is the release version.
+  2. Send a Slack message to announce the deployment of X with the version.
+  3. Run a GitHub workflow for repo X to push the release.
 
 You don't need to interpret the content. Please just pass it to the tool.
 ```
