@@ -72,6 +72,12 @@ Put the following configuration to `claude_desktop_config.json`.
 
 ```
 
+# Example MCP Servers that can be used to Run Runbooks
+
+- [GitHub](https://github.com/github/github-mcp-server)
+- [Slack](https://github.com/modelcontextprotocol/servers/tree/main/src/slack)
+- Kubernetes. There are several implementations (e.g., [mcp-k8s-go](https://github.com/strowk/mcp-k8s-go))
+
 # Upcoming Features
 
 - Rest endpoint + frontend for managing runbooks.
