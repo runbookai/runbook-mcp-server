@@ -1,4 +1,4 @@
-name: post-merge
+name: Post Merge
 on:
   push:
     branches:
