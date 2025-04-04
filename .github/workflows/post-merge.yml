@@ -1,0 +1,34 @@
+name: post-merge
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+
+  re-test:
+    outputs:
+      release_commit: ${{ startsWith(github.event.head_commit.message, 'Release v') }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Re-test
+      run: make test
+
+  release-image-and-chart:
+    if: needs.re-test.outputs.release_commit == 'true'
+    needs: re-test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Extract version
+      run: |
+        ver=$(echo "$COMMIT_MESSAGE"| head -n1 | awk '{print $2}' |sed 's/v//')
+        echo "version=${ver}" >> $GITHUB_ENV
+      env:
+        COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+    - name: Create release
+      uses: softprops/action-gh-release@v2.0.8
+      with:
+        tag_name: v${{ env.version }}
+        generate_release_notes: true
