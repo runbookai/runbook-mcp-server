@@ -13,7 +13,6 @@ Please watch the demo video below to understand how it works!
 
 ![demo](./assets/images/demo.gif)
 
-
 # How to Use
 
 To create a new runbook, use the `create_runbook` tool. Here are example prompts:
@@ -34,8 +33,8 @@ Create a new runbook:
 
 - name: deploy
 - content:
-  1. Get the latest tag from GitHub X. This is the release version.
-  2. Send a Slack message to announce the deployment of X with the version.
+  1. Get the latest tag from GitHub repo X. This is the release version.
+  2. Send a Slack message to channel Y. This announces the deployment of X with the version.
   3. Run a GitHub workflow for repo X to push the release.
 
 You don't need to interpret the content. Please just pass it to the tool.
@@ -49,7 +48,6 @@ To run a runbook, take the following steps:
 4. Submit the generated prompt.
 
 Then Claude Desktop will talk to other MCP servers to run the runbook.
-
 
 # Claude Desktop Configuration
 
@@ -79,16 +77,36 @@ Put the following configuration to `claude_desktop_config.json`.
 - [DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP)
 - Web search and browser automation ([link](https://modelcontextprotocol.io/examples#web-and-browser-automation)
 - Kubernetes. There are several implementations (e.g., [mcp-k8s-go](https://github.com/strowk/mcp-k8s-go))
-  
 
-# Upcoming Features
+# Development Plan
 
+- Instead of saving the content of the runbook in the database, just save as a file. This helps easy editting. People can also
+  simply use GitHub for versioning.
+- Runbook template X that is instantiated with given inputs.
+  -  Maybe this is not needed. A user just needs to put additional prompts when running the runbook.
+- Save executing log (for auditting and refinement)
+   - Remove secrets
+   -  Also pass a past log to the runbook prompt if this helps better execution
+- Approval flow.
+  - Add a tool `request_approval`.
+  - This sends a slack message to a channel. 
+  - Then the Runbook MCP server watches the channel. If someone responds (yes / no), it proceeeds or returns an error.
+- Better runbook search
+  - The exact name match is not great
+- Registrtation to [Smithery](https://smithery.ai/server/@runbookai/runbook-mcp-server).
+
+# Potential Work Items where its Feasibility is not clear
+
+Note: Claude Desktop does not support "Sampling". This puts some limitations. 
+
+- Sub-runbook and reusable execution block
 - Rest endpoint + frontend for managing runbooks.
 - Be able to edit the runbook (with versioning)
-- run runbook template X that is instantiated with given inputs
 - show an execution plan for runbook X (dry-run)
+  - Restrict MCP servers and tools
 - convert a previous conversation into a runbook
 - fine-tuning.
 - Be able to refine a runbook. If there is a successful execution, save it as an example
   and give it to Claude.
 - Periodic execution
+- Be able to provision an environment (VM, docker) for running MCP servers. 
