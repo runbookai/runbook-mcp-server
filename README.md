@@ -76,7 +76,10 @@ Put the following configuration to `claude_desktop_config.json`.
 
 - [GitHub](https://github.com/github/github-mcp-server)
 - [Slack](https://github.com/modelcontextprotocol/servers/tree/main/src/slack)
+- [DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP)
+- Web search and browser automation ([link](https://modelcontextprotocol.io/examples#web-and-browser-automation)
 - Kubernetes. There are several implementations (e.g., [mcp-k8s-go](https://github.com/strowk/mcp-k8s-go))
+  
 
 # Upcoming Features
 
