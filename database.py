@@ -13,8 +13,11 @@ class Config(object):
     def __init__(self, config_file_path: str):
         with open(config_file_path, 'r') as f:
             config = yaml.safe_load(f)
-            self.__database_uri = config['database']['uri']
-            self.__migration_dir = config['database']['migrationDir']
+            d = config['database']
+            self.__database_uri = d['uri']
+            self.__migration_dir = d['migrationDir']
+            self.__runbook_file_dir = os.path.abspath(d['runbookFileDir'])
+            self.__runbook_log_dir = os.path.abspath(d['runbookLogDir'])
 
     @property
     def database_uri(self) -> str:
@@ -24,12 +27,21 @@ class Config(object):
     def migration_dir(self) -> str:
         return self.__migration_dir
 
+    @property
+    def runbook_file_dir(self) -> str:
+        return self.__runbook_file_dir
+
+    @property
+    def runbook_log_dir(self) -> str:
+        return self.__runbook_log_dir
+
+
 class Runbook(object):
 
-    def __init__(self, external_id: str, name: str, content: str):
+    def __init__(self, external_id: str, name: str, file_path: str):
         self.__external_id = external_id
         self.__name = name
-        self.__content = content
+        self.__file_path = file_path
 
     @property
     def external_id(self) -> str:
@@ -40,14 +52,14 @@ class Runbook(object):
         return self.__name
 
     @property
-    def content(self) -> str:
-        return self.__content
+    def file_path(self) -> str:
+        return self.__file_path
 
     def to_json(self):
         return {
             "external_id": self.__external_id,
             "name": self.__name,
-            "content": self.__content
+            "content": self.__file_path
         }
 
 class Store(object):
@@ -84,49 +96,51 @@ class Store(object):
                 cur.execute("COMMIT")
 
     def create_runbook(self, runbook):
+
+
         self.__cursor.execute(f"""
 INSERT INTO runbooks (
   external_id,
   name,
-  content
+  file_path
 ) VALUES (
   '{runbook.external_id}',
   '{runbook.name}',
-  '{runbook.content}')
+  '{runbook.file_path}')
 """)
         self.__con.commit()
 
     def get_runbook_by_external_id(self, external_id: str) -> Runbook:
-        res = self.__cursor.execute(f"SELECT external_id, name, content FROM runbooks WHERE external_id = '{external_id}'")
+        res = self.__cursor.execute(f"SELECT external_id, name, file_path FROM runbooks WHERE external_id = '{external_id}'")
         row = res.fetchone()
         if not row:
-            raise Exception('not found')
+            raise Exception(f"Runbook with external ID {external_id} not found")
         external_id = row[0]
         name = row[1]
-        content = row[2]
-        return Runbook(external_id, name, content)
+        file_path = row[2]
+        return Runbook(external_id, name, file_path)
 
     def get_runbook_by_name(self, name: str) -> Runbook:
-        res = self.__cursor.execute(f"SELECT external_id, name, content FROM runbooks WHERE name = '{name}'")
+        res = self.__cursor.execute(f"SELECT external_id, name, file_path FROM runbooks WHERE name = '{name}'")
         row = res.fetchone()
         if not row:
-            raise Exception('not found')
+            raise Exception(f"Runbook of name {name} not found")
         external_id = row[0]
         name = row[1]
-        content = row[2]
-        return Runbook(external_id, name, content)
+        file_path = row[2]
+        return Runbook(external_id, name, file_path)
 
     def delete_runbook_by_name(self, name: str) -> Runbook:
         self.__cursor.execute(f"DELETE FROM runbooks WHERE name = '{name}'")
         self.__con.commit()
 
     def list_runbooks(self) -> list[Runbook]:
-        res = self.__cursor.execute("SELECT external_id, name, content FROM runbooks")
+        res = self.__cursor.execute("SELECT external_id, name, file_path FROM runbooks")
         rs = []
         for row in res:
             print(row)
             external_id = row[0]
             name = row[1]
-            content = row[2]
-            rs.append(Runbook(external_id, name, content))
+            file_path = row[2]
+            rs.append(Runbook(external_id, name, file_path))
         return rs
