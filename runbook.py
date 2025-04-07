@@ -51,12 +51,14 @@ def get_runbook(name: str) -> str:
 
 @mcp.tool()
 async def create_runbook(name: str, content: str) -> str:
-    # Create a runbook file and save the content.
-    file_path = f"{name}.md"
-    with open(os.path.join(runbook_file_dir, file_path), 'w') as f:
-        f.write(content)
     # Generate a uuid and set to the external_id
     external_id = uuid4()
+
+    # Create a runbook file and save the content.
+    file_path = f"{name}_{external_id}.md"
+    with open(os.path.join(runbook_file_dir, file_path), 'w') as f:
+        f.write(content)
+
     r = Runbook(external_id, name, file_path)
     store.create_runbook(r)
     return "Created a new runbook"
@@ -64,7 +66,12 @@ async def create_runbook(name: str, content: str) -> str:
 
 @mcp.tool()
 async def delete_runbook(name: str) -> str:
-    # TODO(kenji): Delete the file?
+    r = store.get_runbook_by_name(name)
+
+    file_path = os.path.join(runbook_file_dir, r.file_path)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
     store.delete_runbook_by_name(name)
     return "Deleted the runbook"
 
