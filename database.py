@@ -114,7 +114,7 @@ INSERT INTO runbooks (
         res = self.__cursor.execute(f"SELECT external_id, name, file_path FROM runbooks WHERE external_id = '{external_id}'")
         row = res.fetchone()
         if not row:
-            raise Exception(f"Runbook of external ID '%{external_id} not found")
+            raise Exception(f"Runbook with external ID {external_id} not found")
         external_id = row[0]
         name = row[1]
         file_path = row[2]
