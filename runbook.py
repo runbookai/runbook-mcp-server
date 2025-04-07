@@ -1,5 +1,6 @@
 import httpx
 import json
+import os
 import mcp.types as types
 
 from uuid import uuid4
@@ -21,6 +22,15 @@ conf = Config('./config.yaml')
 store = Store(conf.database_uri)
 store.run_migrations(conf.migration_dir)
 
+# Create a runbook file dir if it does not exist.
+runbook_file_dir = conf.runbook_file_dir
+
+if not os.path.exists(conf.runbook_file_dir):
+    os.makedirs(conf.runbook_file_dir)
+
+if not os.path.exists(conf.runbook_log_dir):
+    os.makedirs(conf.runbook_log_dir)
+
 
 mcp = FastMCP("Runbook")
 
@@ -38,15 +48,23 @@ def get_runbook(name: str) -> str:
     return json.dumps(r.to_json())
 
 
+
 @mcp.tool()
 async def create_runbook(name: str, content: str) -> str:
+    # Create a runbook file and save the content.
+    file_path = f"{name}.md"
+    with open(os.path.join(runbook_file_dir, file_path), 'w') as f:
+        f.write(content)
+    # Generate a uuid and set to the external_id
     external_id = uuid4()
-    r = Runbook(external_id, name, content)
+    r = Runbook(external_id, name, file_path)
     store.create_runbook(r)
     return "Created a new runbook"
 
+
 @mcp.tool()
 async def delete_runbook(name: str) -> str:
+    # TODO(kenji): Delete the file?
     store.delete_runbook_by_name(name)
     return "Deleted the runbook"
 
@@ -56,7 +74,12 @@ def get_runbook_as_prompt(name: str) -> str:
     # TODO(kenji): Consider taking additional argument for
     # substituting template parameters.
     r = store.get_runbook_by_name(name)
-    return f"Run the following prompt:\n{r.content}"
+
+    content = ""
+    with open(os.path.join(runbook_file_dir, r.file_path), 'r') as f:
+        content = f.read()
+
+    return f"Run the following prompt:\n{content}"
 
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
 database:
  uri: runbooks.db
  migrationDir: migrations
+ runbookFileDir: ./runbook-files
+ runbookLogDir: ./runbook-logs
