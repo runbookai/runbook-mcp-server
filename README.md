@@ -62,7 +62,7 @@ Put the following configuration to `claude_desktop_config.json`.
         "--directory",
         "<ABSOLUTE_PATH>/runbook-mpc-server",
         "run",
-        "runbook.py"
+        "runbook_server.py"
       ]
     }
   }
@@ -89,7 +89,7 @@ Put the following configuration to `claude_desktop_config.json`.
    -  Also pass a past log to the runbook prompt if this helps better execution
 - Approval flow.
   - Add a tool `request_approval`.
-  - This sends a slack message to a channel. 
+  - This sends a slack message to a channel.
   - Then the Runbook MCP server watches the channel. If someone responds (yes / no), it proceeeds or returns an error.
 - Better runbook search
   - The exact name match is not great
@@ -97,7 +97,7 @@ Put the following configuration to `claude_desktop_config.json`.
 
 # Potential Work Items where its Feasibility is not clear
 
-Note: Claude Desktop does not support "Sampling". This puts some limitations. 
+Note: Claude Desktop does not support "Sampling". This puts some limitations.
 
 - Sub-runbook and reusable execution block
 - Rest endpoint + frontend for managing runbooks.
@@ -109,4 +109,4 @@ Note: Claude Desktop does not support "Sampling". This puts some limitations.
 - Be able to refine a runbook. If there is a successful execution, save it as an example
   and give it to Claude.
 - Periodic execution
-- Be able to provision an environment (VM, docker) for running MCP servers. 
+- Be able to provision an environment (VM, docker) for running MCP servers.
