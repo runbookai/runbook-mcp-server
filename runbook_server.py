@@ -13,23 +13,17 @@ from mcp.server.fastmcp import Context, FastMCP
 from mcp.server.fastmcp.prompts import base
 from typing import Any
 
-from database import Config
-from database import Store
-from database import Runbook
+from config import Config
+from search import RunbookSearchEngine
 
 
 conf = Config('./config.yaml')
-store = Store(conf.database_uri)
-store.run_migrations(conf.migration_dir)
+conf.validate()
 
-# Create a runbook file dir if it does not exist.
-runbook_file_dir = conf.runbook_file_dir
+if not os.path.exists(conf.runbook_logs_dir):
+    os.makedirs(conf.runbook_logs_dir)
 
-if not os.path.exists(conf.runbook_file_dir):
-    os.makedirs(conf.runbook_file_dir)
-
-if not os.path.exists(conf.runbook_log_dir):
-    os.makedirs(conf.runbook_log_dir)
+search_engine = RunbookSearchEngine(conf.runbooks_dir, conf.runbooks_index_dir)
 
 
 mcp = FastMCP("Runbook")
@@ -38,29 +32,27 @@ mcp = FastMCP("Runbook")
 
 @mcp.resource("runbooks://runbooks")
 def list_runbooks() -> str:
-    rs = store.list_runbooks()
-    return json.dumps([r.to_json() for r in rs])
+    rs = search_engine.runbook_names
+    return json.dumps([{"name": r} for r in rs])
 
 
 @mcp.resource("runbooks://runbooks/{name}")
 def get_runbook(name: str) -> str:
-    r = store.get_runbook_by_name(name)
-    return json.dumps(r.to_json())
-
+    r = search_engine.get_runbook_by_name(name)
+    if r:
+        return json.dumps({"name": r})
+    return json.dumps({})
 
 
 @mcp.tool()
 async def create_runbook(name: str, content: str) -> str:
-    # Generate a uuid and set to the external_id
-    external_id = uuid4()
-
-    # Create a runbook file and save the content.
-    file_path = f"{name}_{external_id}.md"
-    with open(os.path.join(runbook_file_dir, file_path), 'w') as f:
+    """Create a runbook file and save the content."""
+    file_path = f"{name}.md"
+    with open(os.path.join(runbook_file_dir, file_path), "w") as f:
         f.write(content)
 
-    r = Runbook(external_id, name, file_path)
-    store.create_runbook(r)
+    # TODO(kenji): Reindex the runbook.
+
     return "Created a new runbook"
 
 
@@ -68,22 +60,25 @@ async def create_runbook(name: str, content: str) -> str:
 async def delete_runbook(name: str) -> str:
     r = store.get_runbook_by_name(name)
 
-    file_path = os.path.join(runbook_file_dir, r.file_path)
+    # TODO(kenji): Reindex the runbook.
+
+    file_path = os.path.join(runbook_file_dir, r)
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    store.delete_runbook_by_name(name)
     return "Deleted the runbook"
 
 
 @mcp.prompt()
 def get_runbook_as_prompt(name: str) -> str:
-    # TODO(kenji): Consider taking additional argument for
-    # substituting template parameters.
-    r = store.get_runbook_by_name(name)
+
+    rs = search_engine.search_runbooks(name, limit=1)
+    if not rs:
+        raise ValueError(f"Runbook {name} not found")
+    r = rs[0]
 
     content = ""
-    with open(os.path.join(runbook_file_dir, r.file_path), 'r') as f:
+    with open(r["path"], "r") as f:
         content = f.read()
 
     return f"Run the following prompt:\n{content}"
