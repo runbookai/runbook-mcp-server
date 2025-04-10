@@ -4,13 +4,12 @@ import yaml
 class Config(object):
 
     def __init__(self, config_file_path: str):
-        with open(config_file_path, 'r') as f:
-            config = yaml.safe_load(f)
-            d = config['database']
+        with open(config_file_path, "r") as f:
+            c = yaml.safe_load(f)
 
-            self.__runbooks_dir = os.path.abspath(d['runbooksDir'])
-            self.__runbook_logs_dir = os.path.abspath(d['runbookLogsDir'])
-            self.__runbooks_index_dir = os.path.abspath(d['runbooksIndexDir'])
+            self.__runbooks_dir = os.path.abspath(c["runbooksDir"])
+            self.__runbook_logs_dir = os.path.abspath(c["runbookLogsDir"])
+            self.__runbooks_index_dir = os.path.abspath(c["runbooksIndexDir"])
 
     @property
     def runbooks_dir(self) -> str:

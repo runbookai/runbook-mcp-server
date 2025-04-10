@@ -1,6 +1,3 @@
-database:
- uri: runbooks.db
- migrationDir: migrations
- runbooksDir: ./example-runbooks
- runbookLogsDir: ./runbook-logs
- runbooksIndexDir: ./runbooks-index
+runbooksDir: ./example-runbooks
+runbookLogsDir: ./runbook-logs
+runbooksIndexDir: ./runbooks-index
