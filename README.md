@@ -15,7 +15,9 @@ Please watch the demo video below to understand how it works!
 
 # How to Use
 
-To create a new runbook, use the `create_runbook` tool. Here are example prompts:
+Update `config.yaml`. You can use markdown files or text files as runbooks.  See [examples](./examples-runbooks/).
+
+You can also create a new runbook, use the `create_runbook` tool. Here is an example prompt:
 
 *Example 1*
 ```
@@ -27,24 +29,12 @@ Create a new runbook:
 You don't need to interpret the content. Please just pass it to the tool.
 ```
 
-*Example 2*
-```
-Create a new runbook:
-
-- name: deploy
-- content:
-  1. Get the latest tag from GitHub repo X. This is the release version.
-  2. Send a Slack message to channel Y. This announces the deployment of X with the version.
-  3. Run a GitHub workflow for repo X to push the release.
-
-You don't need to interpret the content. Please just pass it to the tool.
-```
 
 To run a runbook, take the following steps:
 
 1. Click "Attach from MCP" from Claude Desktop.
 2. Select `get_runbook_as_prompt` from the list of integrations.
-3. Pass the name of the runbook you would like to execute.
+3. Pass the name of the runbook you would like to execute. Also specify variables with a comma-separated list (e.g., `var1=key1,var2=key2`).
 4. Submit the generated prompt.
 
 Then Claude Desktop will talk to other MCP servers to run the runbook.
