@@ -79,7 +79,7 @@ async def reindex_runbooks() -> str:
 
 
 @mcp.prompt()
-def get_runbook_as_prompt(name: str, vars: list[str]) -> str:
+def get_runbook_as_prompt(name: str, vars: str) -> str:
 
     env_map = {}
     env_file = os.path.join(conf.runbooks_dir, "env.yaml")
@@ -88,7 +88,7 @@ def get_runbook_as_prompt(name: str, vars: list[str]) -> str:
             env_map = yaml.safe_load(f)
 
     var_map = {}
-    for var_str in vars:
+    for var_str in vars.split(","):
         # var is of the form key=value. Split it into key and value.
         key, value = var_str.split("=")
         var_map[key] = value
