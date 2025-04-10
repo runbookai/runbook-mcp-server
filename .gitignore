@@ -1,5 +1,4 @@
 __pycache__
 .venv
-runbooks.db
 runbook-logs
 runbooks-index

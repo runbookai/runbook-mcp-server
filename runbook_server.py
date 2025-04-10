@@ -2,6 +2,7 @@ import httpx
 import json
 import os
 import mcp.types as types
+import yaml
 
 from uuid import uuid4
 
@@ -51,7 +52,7 @@ async def create_runbook(name: str, content: str) -> str:
     with open(os.path.join(runbook_file_dir, file_path), "w") as f:
         f.write(content)
 
-    # TODO(kenji): Reindex the runbook.
+    search_engine.create_index()
 
     return "Created a new runbook"
 
@@ -60,17 +61,37 @@ async def create_runbook(name: str, content: str) -> str:
 async def delete_runbook(name: str) -> str:
     r = store.get_runbook_by_name(name)
 
-    # TODO(kenji): Reindex the runbook.
-
     file_path = os.path.join(runbook_file_dir, r)
     if os.path.exists(file_path):
         os.remove(file_path)
 
+    search_engine.create_index()
+
     return "Deleted the runbook"
 
 
+@mcp.tool()
+async def reindex_runbooks() -> str:
+
+    search_engine.create_index()
+
+    return "Reindexed the runbook"
+
+
 @mcp.prompt()
-def get_runbook_as_prompt(name: str) -> str:
+def get_runbook_as_prompt(name: str, vars: list[str]) -> str:
+
+    env_map = {}
+    env_file = os.path.join(conf.runbooks_dir, "env.yaml")
+    if os.path.exists(env_file):
+        with open(env_file, "r") as f:
+            env_map = yaml.safe_load(f)
+
+    var_map = {}
+    for var_str in vars:
+        # var is of the form key=value. Split it into key and value.
+        key, value = var_str.split("=")
+        var_map[key] = value
 
     rs = search_engine.search_runbooks(name, limit=1)
     if not rs:
@@ -80,8 +101,22 @@ def get_runbook_as_prompt(name: str) -> str:
     content = ""
     with open(r["path"], "r") as f:
         content = f.read()
+    template = f"Run the following prompt:\n{content}"
 
-    return f"Run the following prompt:\n{content}"
+
+    # First replace envs. This is a hack, but we don't use format_map()
+    # as it allows only string literal for dictionary.
+    #
+    # For example, '{my_map[k]}'.format_map({'my_map': {'k': 'v'}}) works, but
+    # '{my_map[k_var]}'.format_map({'my_map': {'k': 'v'}, 'k_var': 'k'}) returns
+    # `KeyError: 'k_var'` as `k_var` in `{my_map[k_var]}` is treated as a string literal, not variable.
+    #
+    # TODO(kenji): Fix.
+    for k, v in var_map.items():
+        template = template.replace("{var.%s}" % k, v)
+
+    m = {"env": env_map}
+    return template.format_map(m)
 
 
 if __name__ == "__main__":
