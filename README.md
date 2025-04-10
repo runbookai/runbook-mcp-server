@@ -15,44 +15,9 @@ Please watch the demo video below to understand how it works!
 
 # How to Use
 
-Update `config.yaml`. You can use markdown files or text files as runbooks.  See [examples](./examples-runbooks/).
+## Step 1. Start the MCP server with Claude Desktop.
 
-We support env/var substitution.
-
-- Define `env.yaml`.
-
-```yaml
-env:
-  key: value
-```
-
-- `{env[key]}` is replaced with `value`.
-- `{var.name}` is replaced with a variable value.
-
-
-You can also create a new runbook, use the `create_runbook` tool. Here is an example prompt:
-
-*Example 1*
-```
-Create a new runbook:
-
-- name: list_pods
-- content: List pods in all namespaces, find pods that are not ready, and send that to Slack.
-
-You don't need to interpret the content. Please just pass it to the tool.
-```
-
-
-To run a runbook, take the following steps:
-
-1. Click "Attach from MCP" from Claude Desktop.
-2. Select `get_runbook_as_prompt` from the list of integrations.
-3. Pass the name of the runbook you would like to execute. Also specify variables with a comma-separated list (e.g., `var1=key1,var2=key2`).
-4. Submit the generated prompt.
-
-Then Claude Desktop will talk to other MCP servers to run the runbook.
-
-# Claude Desktop Configuration
+Create `config.yaml`
 
 Put the following configuration to `claude_desktop_config.json`.
 
@@ -70,15 +35,55 @@ Put the following configuration to `claude_desktop_config.json`.
     }
   }
 }
-
 ```
+
+## Step 2. Create runbooks
+
+You can use markdown files or text files as runbooks.  See [examples](./examples-runbooks/).
+
+We support env/var substitution.
+
+Define `env.yaml`.
+
+```yaml
+env:
+  key: value
+```
+
+- `{env[key]}` is replaced with `value`.
+- `{var.name}` is replaced with a variable value.
+
+Rebuild the index when files are updated. 
+
+You can also create a new runbook, use the `create_runbook` tool. Here is an example prompt:
+
+*Example 1*
+```
+Create a new runbook:
+
+- name: list_pods
+- content: List pods in all namespaces, find pods that are not ready, and send that to Slack.
+
+You don't need to interpret the content. Please just pass it to the tool.
+```
+
+## Step 3. Run runbooks
+
+To run a runbook, take the following steps:
+
+1. Click "Attach from MCP" from Claude Desktop.
+2. Select `get_runbook_as_prompt` from the list of integrations.
+3. Pass the name of the runbook you would like to execute. Also specify variables with a comma-separated list (e.g., `var1=key1,var2=key2`).
+4. Submit the generated prompt.
+
+Then Claude Desktop will talk to other MCP servers to run the runbook.
 
 # Example MCP Servers that can be used to Run Runbooks
 
 - [GitHub](https://github.com/github/github-mcp-server)
 - [Slack](https://github.com/modelcontextprotocol/servers/tree/main/src/slack)
 - [DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP)
-- Web search and browser automation ([link](https://modelcontextprotocol.io/examples#web-and-browser-automation)
+- Web search and browser automation ([link](https://modelcontextprotocol.io/examples#web-and-browser-automation))
 - Kubernetes. There are several implementations (e.g., [mcp-k8s-go](https://github.com/strowk/mcp-k8s-go))
 
 # Development Plan
