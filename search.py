@@ -48,26 +48,26 @@ class RunbookSearchEngine(object):
         writer = idx.writer()
 
         # Add runbook files to the index.
-        # TODO(kenji): Search recursively.
-        for filename in os.listdir(self.__runbooks_dir):
-            if not filename.endswith(('.md', '.txt')):
-                continue
+        for root_dir, _, files in os.walk(self.__runbooks_dir):
+            for filename in files:
+                if not filename.endswith((".md", ".txt")):
+                    continue
 
-            root, ext = os.path.splitext(filename)
-            name = os.path.basename(root)
+                root, ext = os.path.splitext(filename)
+                name = os.path.basename(root)
 
-            self.__runbook_names.append(name)
+                self.__runbook_names.append(name)
 
-            path = os.path.join(self.__runbooks_dir, filename)
-            with open(path, 'r', encoding='utf-8') as file:
-                content = file.read()
+                path = os.path.join(root_dir, filename)
+                with open(path, "r", encoding="utf-8") as file:
+                    content = file.read()
 
-                writer.add_document(
-                    path=path,
-                    name=name,
-                    content=content
-                )
-                log.info(f"Added {filename} to the index")
+                    writer.add_document(
+                        path=path,
+                        name=name,
+                        content=content
+                    )
+                    log.info(f"Added {filename} to the index")
 
         writer.commit()
         log.info(f"Indexing completed. {len(self.__runbook_names)} runbooks indexed.")
