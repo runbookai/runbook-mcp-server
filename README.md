@@ -17,6 +17,19 @@ Please watch the demo video below to understand how it works!
 
 Update `config.yaml`. You can use markdown files or text files as runbooks.  See [examples](./examples-runbooks/).
 
+We support env/var substitution.
+
+- Define `env.yaml`.
+
+```yaml
+env:
+  key: value
+```
+
+- `{env[key]}` is replaced with `value`.
+- `{var.name}` is replaced with a variable value.
+
+
 You can also create a new runbook, use the `create_runbook` tool. Here is an example prompt:
 
 *Example 1*
