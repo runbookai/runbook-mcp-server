@@ -79,7 +79,7 @@ async def reindex_runbooks() -> str:
 
 
 @mcp.prompt()
-def get_runbook_as_prompt(name: str, vars: str) -> str:
+def get_runbook_as_prompt(runbook_search_keyword: str, vars: str) -> str:
 
     env_map = {}
     env_file = os.path.join(conf.runbooks_dir, "env.yaml")
@@ -93,16 +93,15 @@ def get_runbook_as_prompt(name: str, vars: str) -> str:
         key, value = var_str.split("=")
         var_map[key] = value
 
-    rs = search_engine.search_runbooks(name, limit=1)
+    rs = search_engine.search_runbooks(runbook_search_keyword, limit=1)
     if not rs:
-        raise ValueError(f"Runbook {name} not found")
+        raise ValueError(f"Runbook matching with {runbook_search_keyword} not found")
     r = rs[0]
 
     content = ""
     with open(r["path"], "r") as f:
         content = f.read()
     template = f"Run the following prompt:\n{content}"
-
 
     # First replace envs. This is a hack, but we don't use format_map()
     # as it allows only string literal for dictionary.
