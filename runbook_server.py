@@ -3,7 +3,9 @@ import json
 import os
 import mcp.types as types
 import yaml
+import logging
 
+from datetime import datetime
 from uuid import uuid4
 
 from contextlib import asynccontextmanager
@@ -17,6 +19,7 @@ from typing import Any
 from config import Config
 from search import RunbookSearchEngine
 
+log = logging.getLogger("runbook-server")
 
 conf = Config('./config.yaml')
 conf.validate()
@@ -25,7 +28,7 @@ if not os.path.exists(conf.runbook_logs_dir):
     os.makedirs(conf.runbook_logs_dir)
 
 search_engine = RunbookSearchEngine(conf.runbooks_dir, conf.runbooks_index_dir)
-
+search_engine.create_index()
 
 mcp = FastMCP("Runbook")
 
@@ -49,11 +52,10 @@ def get_runbook(name: str) -> str:
 async def create_runbook(name: str, content: str) -> str:
     """Create a runbook file and save the content."""
     file_path = f"{name}.md"
-    with open(os.path.join(runbook_file_dir, file_path), "w") as f:
+    with open(os.path.join(conf.runbooks_dir, file_path), "w") as f:
         f.write(content)
 
     search_engine.create_index()
-
     return "Created a new runbook"
 
 
@@ -61,20 +63,26 @@ async def create_runbook(name: str, content: str) -> str:
 async def delete_runbook(name: str) -> str:
     r = store.get_runbook_by_name(name)
 
-    file_path = os.path.join(runbook_file_dir, r)
+    file_path = os.path.join(conf.runbooks_dir, r)
     if os.path.exists(file_path):
         os.remove(file_path)
 
     search_engine.create_index()
-
     return "Deleted the runbook"
 
 
 @mcp.tool()
+async def create_runbook_log(runbook_name: str, execution_log: str) -> str:
+    time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    file_path = f"{runbook_name}_{time}.log"
+    with open(os.path.join(conf.runbook_logs_dir, file_path), "w") as f:
+        f.write(execution_log)
+    return "Created the runbook log"
+
+
+@mcp.tool()
 async def reindex_runbooks() -> str:
-
     search_engine.create_index()
-
     return "Reindexed the runbook"
 
 
@@ -90,18 +98,30 @@ def get_runbook_as_prompt(runbook_search_keyword: str, vars: str) -> str:
     var_map = {}
     for var_str in vars.split(","):
         # var is of the form key=value. Split it into key and value.
-        key, value = var_str.split("=")
-        var_map[key] = value
+        l = var_str.split("=")
+        if len(l) != 2:
+            # Ignore.
+            # TODO(kenji): better handling
+            continue
+        var_map[l[0]] = l[1]
 
     rs = search_engine.search_runbooks(runbook_search_keyword, limit=1)
     if not rs:
         raise ValueError(f"Runbook matching with {runbook_search_keyword} not found")
     r = rs[0]
+    runbook_name = r["name"]
+    log.info(f"Generating a prompt from runbook {runbook_name}")
 
     content = ""
     with open(r["path"], "r") as f:
         content = f.read()
-    template = f"Run the following prompt:\n{content}"
+    template = f"""Run the following prompt:
+
+{content}
+
+Once you complete the above runbook, call the tool 'create_runbook_log'. We pass the runbook name '{runbook_name}' and
+and the conversation/execution log to the tool.
+"""
 
     # First replace envs. This is a hack, but we don't use format_map()
     # as it allows only string literal for dictionary.

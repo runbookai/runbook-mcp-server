@@ -28,7 +28,7 @@ Put the following configuration to `claude_desktop_config.json`.
       "command": "uv",
       "args": [
         "--directory",
-        "<ABSOLUTE_PATH>/runbook-mpc-server",
+        "<ABSOLUTE_PATH>/runbook-mcp-server",
         "run",
         "runbook_server.py"
       ]
@@ -53,7 +53,7 @@ env:
 - `{env[key]}` is replaced with `value`.
 - `{var.name}` is replaced with a variable value.
 
-Rebuild the index when files are updated. 
+Rebuild the index when files are updated.
 
 You can also create a new runbook, use the `create_runbook` tool. Here is an example prompt:
 
