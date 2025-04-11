@@ -2,6 +2,10 @@
   <img title="Runbook.AI" alt="Runbook.AI" width="20%" src="./assets/images/runbook.ai.png">
 </p>
 
+<a href="https://glama.ai/mcp/servers/p3mq5xzyof">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/p3mq5xzyof/badge" alt="Claude Desktop Commander MCP server" />
+</a>
+
 # Runbook MCP Server
 
 Runbook MCP Server enables you to run your own runbooks from Claude Desktop.
