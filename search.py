@@ -1,10 +1,10 @@
 import os
 import re
+import shutil
+import logging
 from whoosh.index import create_in, open_dir
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.qparser import QueryParser, MultifieldParser
-import shutil
-import logging
 
 
 log = logging.getLogger("runbook-indexer")
@@ -77,9 +77,7 @@ class RunbookSearchEngine(object):
         """Get the search index, creating it if necessary."""
         if not os.path.exists(self.__index_dir):
             return self.create_index()
-
         return open_dir(self.__index_dir)
-
 
     def search_runbooks(self, query_str: str, limit):
         """Search runbooks using Whoosh."""
