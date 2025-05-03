@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/runbookai-runbook-mcp-server-badge.png)](https://mseep.ai/app/runbookai-runbook-mcp-server)
+
 <p align="center">
   <img title="Runbook.AI" alt="Runbook.AI" width="20%" src="./assets/images/runbook.ai.png">
 </p>
