@@ -1,4 +1,3 @@
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/runbookai-runbook-mcp-server-badge.png)](https://mseep.ai/app/runbookai-runbook-mcp-server)
 
 <p align="center">
   <img title="Runbook.AI" alt="Runbook.AI" width="20%" src="./assets/images/runbook.ai.png">
@@ -124,3 +123,7 @@ Note: Claude Desktop does not support "Sampling". This puts some limitations.
   and give it to Claude.
 - Periodic execution
 - Be able to provision an environment (VM, docker) for running MCP servers.
+
+
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/runbookai-runbook-mcp-server-badge.png)](https://mseep.ai/app/runbookai-runbook-mcp-server)
+
