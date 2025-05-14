@@ -115,7 +115,7 @@ def get_runbook_as_prompt(runbook_search_keyword: str, vars: str) -> str:
     content = ""
     with open(r["path"], "r") as f:
         content = f.read()
-    template = f"""Run the following prompt:
+    template = f"""Run the following prompt with MCP:
 
 {content}
 
